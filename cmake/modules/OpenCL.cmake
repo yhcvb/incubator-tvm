@@ -16,13 +16,13 @@
 # under the License.
 
 # OPENCL Module
-find_package(OpenCL QUIET)
+# find_package(OpenCL QUIET)
 
-if(OpenCL_FOUND)
-  # always set the includedir when cuda is available
-  # avoid global retrigger of cmake
-  include_directories(${OpenCL_INCLUDE_DIRS})
-endif(OpenCL_FOUND)
+# if(OpenCL_FOUND)
+#   # always set the includedir when cuda is available
+#   # avoid global retrigger of cmake
+#   include_directories(${OpenCL_INCLUDE_DIRS})
+# endif(OpenCL_FOUND)
 
 if(USE_SDACCEL)
   message(STATUS "Build with SDAccel support")
@@ -49,10 +49,15 @@ else()
 endif(USE_AOCL)
 
 if(USE_OPENCL)
-  find_package(OpenCL REQUIRED)
+  include_directories(${CMAKE_SOURCE_DIR}/3rdparty/libopencl-stub/include)
+  add_library(opencl STATIC ${CMAKE_SOURCE_DIR}/3rdparty/libopencl-stub/src/libopencl.c)
+endif(USE_OPENCL)
+
+if(USE_OPENCL)
+  # find_package(OpenCL REQUIRED)
   message(STATUS "Build with OpenCL support")
   file(GLOB RUNTIME_OPENCL_SRCS src/runtime/opencl/*.cc)
-  list(APPEND TVM_RUNTIME_LINKER_LIBS ${OpenCL_LIBRARIES})
+  list(APPEND TVM_RUNTIME_LINKER_LIBS opencl)
   list(APPEND RUNTIME_SRCS ${RUNTIME_OPENCL_SRCS})
 else()
   list(APPEND COMPILER_SRCS src/target/opt/build_opencl_off.cc)
