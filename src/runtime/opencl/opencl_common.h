@@ -285,6 +285,13 @@ class OpenCLThreadEntry {
     device.device_type = device_type;
   }
   OpenCLThreadEntry() : OpenCLThreadEntry(kDLOpenCL, OpenCLWorkspace::Global()) {}
+  // deconstructor
+  ~OpenCLThreadEntry() {
+      // free the kernels
+      for (KTEntry kte : kernel_table) {
+        OPENCL_CALL(clReleaseKernel(kte.kernel));
+      }
+  }
 
   // get the global workspace
   static OpenCLThreadEntry* ThreadLocal();

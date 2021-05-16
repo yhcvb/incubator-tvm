@@ -101,10 +101,6 @@ OpenCLModuleNode::~OpenCLModuleNode() {
       workspace_->free_kernel_ids.push_back(kv.second.kernel_id);
     }
   }
-  // free the kernels
-  for (cl_kernel k : kernels_) {
-    OPENCL_CALL(clReleaseKernel(k));
-  }
   // free the programs
   for (auto& kv : programs_) {
     for (auto& program : kv.second) {
